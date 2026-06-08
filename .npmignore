@@ -1,0 +1,9 @@
+# Source & dev config are not shipped — only dist/ is published (see package.json "files").
+src/
+test/
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+.gitignore
+*.tsbuildinfo
+coverage/

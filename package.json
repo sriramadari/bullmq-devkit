@@ -1,0 +1,73 @@
+{
+  "name": "bullmq-devkit",
+  "version": "0.1.0",
+  "description": "A zero-dependency developer toolkit for BullMQ: queue health checks, Prometheus metrics, dead-letter / failed-job management, retry debugging, and cron validation. Library + CLI.",
+  "keywords": [
+    "bullmq",
+    "bull",
+    "queue",
+    "redis",
+    "jobs",
+    "worker",
+    "monitoring",
+    "metrics",
+    "prometheus",
+    "healthcheck",
+    "dead-letter",
+    "dlq",
+    "retry",
+    "cron",
+    "devtools",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "sriramadari",
+  "homepage": "https://github.com/sriramadari/bullmq-devkit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sriramadari/bullmq-devkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sriramadari/bullmq-devkit/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "bin": {
+    "bullmq-devkit": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "bullmq": ">=4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "bullmq": "^5.12.0",
+    "tsup": "^8.2.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}
