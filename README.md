@@ -20,6 +20,42 @@ npm install bullmq
 
 ---
 
+## What it does and how it helps
+
+**The problem.** BullMQ is a queue, not an ops layer. When jobs pile up or start failing in production you end up in redis-cli or a dashboard counting failures by hand, writing one-off scripts to retry them, and guessing why a job keeps retrying. A typo in a cron pattern shows up as a job that silently never runs.
+
+**What it does**
+
+- **Health checks.** checkQueueHealth() compares waiting, active, delayed and failed counts, the failure ratio and the paused flag against thresholds. Over a threshold is degraded, over twice it is unhealthy, and the worst check sets the overall status.
+- **Prometheus metrics.** bullmq_jobs{queue, state} and bullmq_queue_paused in the text exposition format. createMetricsHandler() gives you a /metrics route for Express or plain http.
+- **Failed-job triage.** summarizeFailures() groups failed jobs by the first line of their error. retryFailedJobs(), purgeFailedJobs() and archiveFailedJobs() act on them, filtered by reason, age or any predicate.
+- **Retry debugging.** inspectJob() returns a job's state, attempts, trimmed stack, timings and the estimated time of its next retry, using the same backoff math as BullMQ.
+- **Cron validation.** validateCron() reports errors and suspicious patterns (every second, a date that never occurs); getNextRuns() lists upcoming run times in UTC.
+- **CLI.** health, metrics, failed, retry, purge, inspect and cron, with queues discovered from Redis so most commands need no configuration.
+
+**How it helps**
+
+| Before | With `bullmq-devkit` |
+|---|---|
+| "Is the email queue OK?" means opening a dashboard and eyeballing counts. | A /health/queues endpoint your uptime monitor or load balancer can poll. |
+| 4,000 failed jobs and no idea which errors matter. | Three failure reasons with counts; retry the transient one, purge the rest. |
+| Queue alerting needs a custom exporter. | Point the Prometheus you already run at /metrics. |
+| 0 0 31 2 * deploys fine and never fires. | The validator warns before you ship it. |
+
+**Use it when**
+
+- You run BullMQ in production and need visibility and triage tools.
+- You want queue health in your existing monitoring rather than another dashboard.
+
+**Not the right tool for**
+
+- A visual dashboard (pair it with Bull Board).
+- Managing workers or processing jobs; it only reads and acts on queue state.
+
+**How it works.** Every function takes an ordinary BullMQ Queue you already have and uses its public methods (getJobCounts, getFailed, getJob, job.retry and so on), so nothing about how you create queues changes. bullmq is a peer dependency imported only for types, and the cron parser is self-contained.
+
+---
+
 ## CLI
 
 The CLI auto-discovers your queues from Redis (by scanning `bull:*:meta` keys), so most commands work with zero config.
